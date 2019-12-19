@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name" translatable="false">Foreign Exchange</string>
+    <string name="empty_items">No items available in this moment. Try again please</string>
+</resources>
