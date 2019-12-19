@@ -1,9 +1,6 @@
 package com.anibalbastias.android.foreignexchange.presentation.ui.currencies.viewmodel
 
-import androidx.databinding.ObservableBoolean
-import androidx.databinding.ObservableField
-import androidx.databinding.ObservableInt
-import androidx.databinding.ObservableLong
+import androidx.databinding.*
 import androidx.lifecycle.MutableLiveData
 import com.anibalbastias.android.foreignexchange.R
 import com.anibalbastias.android.foreignexchange.base.subscriber.BaseSubscriber
@@ -12,10 +9,9 @@ import com.anibalbastias.android.foreignexchange.base.view.Resource
 import com.anibalbastias.android.foreignexchange.base.view.ResourceState
 import com.anibalbastias.android.foreignexchange.domain.currencies.usecase.GetLatestCurrenciesUseCase
 import com.anibalbastias.android.foreignexchange.presentation.context
-import com.anibalbastias.android.foreignexchange.presentation.ui.currencies.mapper.CurrenciesViewDataMapper
-import com.anibalbastias.android.foreignexchange.presentation.ui.currencies.model.CurrenciesViewData
-import com.anibalbastias.android.foreignexchange.presentation.ui.currencies.model.CurrencyItemViewData
-import com.anibalbastias.android.foreignexchange.presentation.util.empty
+import com.anibalbastias.android.foreignexchange.presentation.ui.currencies.mapper.CurrenciesUiMapper
+import com.anibalbastias.android.foreignexchange.presentation.ui.currencies.model.UiCurrencies
+import com.anibalbastias.android.foreignexchange.presentation.ui.currencies.model.UiCurrencyItem
 import com.anibalbastias.android.foreignexchange.presentation.util.getFlagUrlByBase
 import javax.inject.Inject
 
@@ -26,18 +22,18 @@ import javax.inject.Inject
 
 class CurrenciesViewModel @Inject constructor(
     private val getLatestCurrenciesUseCase: GetLatestCurrenciesUseCase,
-    private val currenciesViewDataMapper: CurrenciesViewDataMapper
+    private val currenciesUiMapper: CurrenciesUiMapper
 ) : BaseViewModel() {
 
     // region Observables
     var isLoading: ObservableBoolean = ObservableBoolean(false)
     var isError: ObservableBoolean = ObservableBoolean(false)
 
-    var currencyList: ObservableField<ArrayList<CurrencyItemViewData>> =
+    var currencyList: ObservableField<ArrayList<UiCurrencyItem>> =
         ObservableField(arrayListOf())
-    var currencySelected: ObservableField<CurrencyItemViewData> =
-        ObservableField(CurrencyItemViewData())
-    var currencyFactor: ObservableLong = ObservableLong(1)
+    var currencySelected: ObservableField<UiCurrencyItem> =
+        ObservableField(UiCurrencyItem())
+    var currencyFactor: ObservableDouble = ObservableDouble(1.0)
 
     var itemPosition: ObservableInt = ObservableInt(0)
     // endregion
@@ -50,29 +46,29 @@ class CurrenciesViewModel @Inject constructor(
     }
 
     //region Live Data
-    private val getLatestCurrenciesLiveData: MutableLiveData<Resource<CurrenciesViewData?>> =
+    private val getLatestUiCurrenciesLiveData: MutableLiveData<Resource<UiCurrencies?>> =
         MutableLiveData()
 
-    fun getLatestCurrenciesLiveData() = getLatestCurrenciesLiveData
+    fun getLatestCurrenciesLiveData() = getLatestUiCurrenciesLiveData
     //endregion
 
-    fun getFormattedValue(value: String?) =
+    private fun getFormattedValue(value: String?) =
         "${String.format("%.2f", currencyFactor.get() * value?.toDouble()!!).toDouble()}"
 
-    fun getLatestCurrenciesData(base: String? = "HRK") {
+    fun getLatestCurrenciesData() {
         isLoading.set(true)
-        getLatestCurrenciesLiveData.postValue(Resource(ResourceState.LOADING, null, null))
+        getLatestUiCurrenciesLiveData.postValue(Resource(ResourceState.LOADING, null, null))
 
         return getLatestCurrenciesUseCase.execute(
             BaseSubscriber(
-                context?.applicationContext, this, currenciesViewDataMapper,
-                getLatestCurrenciesLiveData, isLoading, isError
-            ), base
+                context?.applicationContext, this, currenciesUiMapper,
+                getLatestUiCurrenciesLiveData, isLoading, isError
+            ), currencySelected.get()?.title
         )
     }
 
-    fun getCurrencyItem(it: Map.Entry<String, Double>): CurrencyItemViewData =
-        CurrencyItemViewData(
+    private fun getCurrencyItem(it: Map.Entry<String, Double>): UiCurrencyItem =
+        UiCurrencyItem(
             title = it.key,
             imageUrl = getFlagUrlByBase(it.key),
             defaultValue = ObservableField(it.value.toString()),
@@ -87,9 +83,10 @@ class CurrenciesViewModel @Inject constructor(
 
     fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
         if (s.isNotEmpty()) {
-            currencyFactor.set(s.toString().toLong())
+            if (!s.startsWith(".") && !s.endsWith("."))
+                currencyFactor.set(s.toString().toDouble())
         } else {
-            currencyFactor.set(1)
+            currencyFactor.set(1.0)
         }
 
         currencyList.get()?.forEach {
@@ -98,10 +95,39 @@ class CurrenciesViewModel @Inject constructor(
     }
 
     fun onFlagCurrencyChange(newValue: Any) {
-        val value = newValue as? CurrencyItemViewData
+        val value = newValue as? UiCurrencyItem
         currencySelected.set(value)
         currencyList.get()?.forEach {
             it.currency?.set(currencySelected.get()?.title)
         }
+    }
+
+    fun setLatestCurrenciesUi(viewData: UiCurrencies?) {
+        // Notify observers
+        isLoading.set(false)
+        isError.set(false)
+
+        // Set data
+        var currencies = mutableListOf<UiCurrencyItem>()
+
+        // If haven't items, only add
+        if (currencyList.get()?.isEmpty() == true) {
+            viewData?.rates?.forEach {
+                currencies.add(getCurrencyItem(it))
+            }
+        } else {
+            currencies = currencyList.get()!!
+
+            val keyList = ArrayList(viewData?.rates?.keys!!)
+            val valueList = ArrayList(viewData.rates.values)
+
+            // Match two arrays and compare
+            keyList.zip(currencies).mapIndexed { index, pair ->
+                if (pair.first == pair.second.title) {
+                    currencies[index].value?.set(getFormattedValue(valueList[index].toString()))
+                }
+            }
+        }
+        currencyList.set(currencies as ArrayList<UiCurrencyItem>?)
     }
 }

@@ -5,7 +5,7 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Spinner
 import androidx.databinding.InverseBindingListener
-import com.anibalbastias.android.foreignexchange.presentation.ui.currencies.model.CurrencyItemViewData
+import com.anibalbastias.android.foreignexchange.presentation.ui.currencies.model.UiCurrencyItem
 import com.anibalbastias.android.foreignexchange.presentation.ui.currencies.spinner.FlagSpinnerAdapter
 
 /**
@@ -25,7 +25,7 @@ object SpinnerExtensions {
         }
     }
 
-    fun Spinner.setFlagsSpinnerEntries(currencies: List<CurrencyItemViewData>?) {
+    fun Spinner.setFlagsSpinnerEntries(currencies: List<UiCurrencyItem>?) {
         currencies?.let {
             adapter = FlagSpinnerAdapter(currencies)
         }
@@ -82,7 +82,7 @@ object SpinnerExtensions {
     /**
      * set spinner value
      */
-    fun Spinner.setFlagSpinnerValue(value: CurrencyItemViewData?) {
+    fun Spinner.setFlagSpinnerValue(value: UiCurrencyItem?) {
         if (adapter != null) {
             val position = (adapter as FlagSpinnerAdapter).getPosition(value)
             setSelection(position, false)

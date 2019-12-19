@@ -10,7 +10,7 @@
 
         <variable
             name="item"
-            type="com.anibalbastias.android.foreignexchange.presentation.ui.currencies.model.CurrencyItemViewData" />
+            type="com.anibalbastias.android.foreignexchange.presentation.ui.currencies.model.UiCurrencyItem" />
 
         <variable
             name="clickHandler"
@@ -45,6 +45,7 @@
                 android:layout_marginEnd="10dp"
                 android:layout_marginRight="10dp"
                 android:scaleType="centerCrop"
+                android:tag="currenciesItemImageView"
                 android:transitionName="firstTransitionName"
                 bind:layout_constraintBottom_toBottomOf="parent"
                 bind:layout_constraintStart_toStartOf="parent"

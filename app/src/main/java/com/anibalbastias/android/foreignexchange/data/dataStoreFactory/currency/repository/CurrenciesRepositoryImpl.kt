@@ -1,9 +1,9 @@
-package com.anibalbastias.android.foreignexchange.data.dataStoreFactory.breeds.repository
+package com.anibalbastias.android.foreignexchange.data.dataStoreFactory.currency.repository
 
+import com.anibalbastias.android.foreignexchange.data.dataStoreFactory.currency.model.RemoteCurrencies
 import com.anibalbastias.android.foreignexchange.data.foreignexchange.ForeignExchangeApiService
-import com.anibalbastias.android.foreignexchange.data.dataStoreFactory.breeds.model.CurrenciesData
 import com.anibalbastias.android.foreignexchange.domain.currencies.repository.ICurrenciesRepository
-import io.reactivex.Flowable
+import io.reactivex.Single
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -15,7 +15,7 @@ import javax.inject.Singleton
 class CurrenciesRepositoryImpl @Inject constructor(private val foreignExchangeApiService: ForeignExchangeApiService) :
     ICurrenciesRepository {
 
-    override fun getLatestCurrencies(base: String): Flowable<CurrenciesData> =
+    override fun getLatestCurrencies(base: String): Single<RemoteCurrencies> =
         foreignExchangeApiService.getLatestCurrencies(base)
 
 }

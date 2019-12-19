@@ -28,13 +28,7 @@ class BaseSubscriber<VD, D>(
     val isError: ObservableBoolean? = null
 ) : APIExceptionHandlerSubscriber<D>(context) {
 
-    override fun onComplete() {
-
-        isLoading?.set(false)
-    }
-
-    override fun onNext(t: D) {
-
+    override fun onSuccess(t: D) {
         t?.let {
             liveData.postValue(Resource(ResourceState.SUCCESS, mapper.executeMapping(it), null))
         }

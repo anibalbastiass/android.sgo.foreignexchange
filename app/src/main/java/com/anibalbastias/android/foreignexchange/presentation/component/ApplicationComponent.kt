@@ -6,7 +6,6 @@ import com.anibalbastias.android.foreignexchange.presentation.module.ViewModelMo
 import com.anibalbastias.android.foreignexchange.presentation.MainActivity
 import com.anibalbastias.android.foreignexchange.base.module.component.BaseApplicationComponent
 import com.anibalbastias.android.foreignexchange.presentation.module.ForeignExchangeRepositoryModule
-import com.anibalbastias.android.foreignexchange.presentation.ui.entry.EntryFragment
 import com.anibalbastias.android.foreignexchange.presentation.ui.currencies.CurrenciesFragment
 import dagger.Component
 import javax.inject.Singleton
@@ -25,6 +24,5 @@ interface ApplicationComponent : BaseApplicationComponent, FragmentInjector {
 }
 
 interface FragmentInjector {
-    fun inject(entryFragment: EntryFragment)
-    fun inject(breedsListFragment: CurrenciesFragment)
+    fun inject(currenciesFragment: CurrenciesFragment)
 }

@@ -1,9 +1,9 @@
-package com.anibalbastias.android.foreignexchange.data.dataStoreFactory.breeds.model
+package com.anibalbastias.android.foreignexchange.data.dataStoreFactory.currency.model
 
 import com.anibalbastias.android.foreignexchange.data.dataStoreFactory.common.TypeData
 import com.google.gson.annotations.SerializedName
 
-data class CurrenciesData(
+data class RemoteCurrencies(
 
     @field:SerializedName("rates")
     val rates: HashMap<String, Double>? = null,

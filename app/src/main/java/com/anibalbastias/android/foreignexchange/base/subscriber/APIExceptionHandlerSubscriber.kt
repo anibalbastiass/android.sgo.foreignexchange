@@ -1,6 +1,7 @@
 package com.anibalbastias.android.foreignexchange.base.subscriber
 
 import android.content.Context
+import io.reactivex.observers.DisposableSingleObserver
 import io.reactivex.subscribers.DisposableSubscriber
 
 /**
@@ -8,14 +9,13 @@ import io.reactivex.subscribers.DisposableSubscriber
  *
  * Transform data error to API error view data
  */
-abstract class APIExceptionHandlerSubscriber<T>(val context: Context?) : DisposableSubscriber<T>() {
+abstract class APIExceptionHandlerSubscriber<T>(val context: Context?) : DisposableSingleObserver<T>() {
 
     abstract fun onAPIError(apiErrorViewData: String?)
-    abstract override fun onNext(t: T)
 
-    override fun onComplete(){}
+    abstract override fun onSuccess(t: T)
 
-    override fun onError(t: Throwable?) {
-        onAPIError(t?.localizedMessage)
+    override fun onError(t: Throwable) {
+        onAPIError(t.localizedMessage)
     }
 }

@@ -4,7 +4,7 @@ import android.os.Parcelable
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize
-data class CurrenciesViewData(
+data class UiCurrencies(
 
     val rates: HashMap<String, Double>? = null,
     val base: String? = null,
