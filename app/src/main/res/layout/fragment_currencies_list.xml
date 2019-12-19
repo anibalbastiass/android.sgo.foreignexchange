@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:bind="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="android.view.View" />
+
+        <variable
+            name="currenciesViewModel"
+            type="com.anibalbastias.android.foreignexchange.presentation.ui.currencies.viewmodel.CurrenciesViewModel" />
+
+        <variable
+            name="currenciesItemListener"
+            type="com.anibalbastias.android.foreignexchange.presentation.util.adapter.base.BaseBindClickHandler" />
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/backgroundColor">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/currenciesToolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/white"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:theme="@style/ToolBarDetailsStyle"
+            app:titleTextColor="@color/primaryColor"
+            tools:title="@string/app_name" >
+
+            <ImageView
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:src="@drawable/ic_placeholder"
+                android:gravity="start"
+                android:tint="@color/primaryColor" />
+
+        </androidx.appcompat.widget.Toolbar>
+
+        <com.anibalbastias.android.foreignexchange.presentation.util.widget.DotLoadingIndicatorView
+            android:id="@+id/currenciesLoader"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:gravity="center"
+            android:visibility="@{currenciesViewModel.isLoading == true ? View.VISIBLE : View.GONE}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/currenciesToolbar" />
+
+        <include
+            android:id="@+id/currenciesListEditor"
+            layout="@layout/view_cell_currency_item_editor"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="15dp"
+            bind:currenciesViewModel="@{currenciesViewModel}"
+            android:visibility="@{currenciesViewModel.isLoading == false ? View.VISIBLE : View.GONE}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/currenciesToolbar" />
+
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/currenciesListSwipeRefreshLayout"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:visibility="@{currenciesViewModel.isLoading == false ? View.VISIBLE : View.GONE}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/currenciesListEditor">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/currenciesListRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:clipChildren="false"
+                android:clipToPadding="false"
+                android:paddingBottom="8dp"
+                android:scrollbars="vertical"
+                android:visibility="visible"
+                bind:loadAdapterData="@{currenciesViewModel.currencyList}"
+                bind:loadAdapterLayout="@{currenciesViewModel.currencyItemLayout}"
+                bind:loadAdapterListener="@{currenciesItemListener}"
+                tools:listitem="@layout/view_cell_currency_item" />
+
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+        <include
+            android:id="@+id/currenciesEmptyContainer"
+            layout="@layout/view_cell_currencies_empty"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:visibility="@{currenciesViewModel.isError == true ? View.VISIBLE : View.GONE}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/currenciesToolbar"
+            tools:visibility="gone" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>
