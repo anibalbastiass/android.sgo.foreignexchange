@@ -40,7 +40,7 @@ class CurrenciesViewModel @Inject constructor(
 
     var currencyItemLayout: Int? = R.layout.view_cell_currency_item
 
-    override fun onCleared() {
+    public override fun onCleared() {
         getLatestCurrenciesUseCase.dispose()
         super.onCleared()
     }
@@ -52,7 +52,7 @@ class CurrenciesViewModel @Inject constructor(
     fun getLatestCurrenciesLiveData() = getLatestUiCurrenciesLiveData
     //endregion
 
-    private fun getFormattedValue(value: String?) =
+    fun getFormattedValue(value: String?) =
         "${String.format("%.2f", currencyFactor.get() * value?.toDouble()!!).toDouble()}"
 
     fun getLatestCurrenciesData() {
@@ -67,7 +67,7 @@ class CurrenciesViewModel @Inject constructor(
         )
     }
 
-    private fun getCurrencyItem(it: Map.Entry<String, Double>): UiCurrencyItem =
+    fun getCurrencyItem(it: Map.Entry<String, Double>): UiCurrencyItem =
         UiCurrencyItem(
             title = it.key,
             imageUrl = getFlagUrlByBase(it.key),

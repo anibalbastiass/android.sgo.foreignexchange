@@ -22,7 +22,7 @@ import com.anibalbastias.android.foreignexchange.presentation.util.adapter.base.
  * Created by anibalbastias on 2019-11-25.
  */
 
-class CurrenciesFragment : BaseModuleFragment(), BaseBindClickHandler<UiCurrencyItem> {
+open class CurrenciesFragment : BaseModuleFragment(), BaseBindClickHandler<UiCurrencyItem> {
 
     override fun tagName(): String = this::class.java.simpleName
     override fun layoutId(): Int = R.layout.fragment_currencies_list
