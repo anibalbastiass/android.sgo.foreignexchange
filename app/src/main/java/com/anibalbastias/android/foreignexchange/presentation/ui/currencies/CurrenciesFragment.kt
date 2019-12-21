@@ -32,11 +32,15 @@ open class CurrenciesFragment : BaseModuleFragment(), BaseBindClickHandler<UiCur
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        appComponent().inject(this)
+        setupInjection()
         navBaseViewModel = getViewModel(viewModelFactory)
         currenciesViewModel = getViewModel(viewModelFactory)
         sharedViewModel = activity!!.getViewModel(SavedStateViewModelFactory(getAppContext(), this))
         setHasOptionsMenu(true)
+    }
+
+    open fun setupInjection() {
+        appComponent().inject(this)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
