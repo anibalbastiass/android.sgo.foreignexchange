@@ -1,204 +1,236 @@
 package com.anibalbastias.android.foreignexchange.presentation.ui.currencies.viewmodel
 
-import com.anibalbastias.android.foreignexchange.base.subscriber.BaseSubscriber
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.anibalbastias.android.foreignexchange.base.view.ResourceState
-import com.anibalbastias.android.foreignexchange.data.dataStoreFactory.breeds.model.CurrenciesData
+import com.anibalbastias.android.foreignexchange.data.dataStoreFactory.currency.model.RemoteCurrencies
 import com.anibalbastias.android.foreignexchange.domain.currencies.usecase.GetLatestCurrenciesUseCase
-import com.anibalbastias.android.foreignexchange.presentation.BaseDataManager.Companion.getErrorMessage
-import com.anibalbastias.android.foreignexchange.presentation.BaseUnitTest
-import com.anibalbastias.android.foreignexchange.presentation.ui.currencies.mapper.breeds.BreedsViewDataMapper
-import com.anibalbastias.android.foreignexchange.presentation.ui.currencies.model.breeds.ForeignExchangeViewData
-import com.nhaarman.mockito_kotlin.*
-import org.junit.Assert.*
-import org.junit.Before
+import com.anibalbastias.android.foreignexchange.factory.CurrencyFactory.makeMapEntryCurrency
+import com.anibalbastias.android.foreignexchange.factory.CurrencyFactory.makeRemoteCurrencies
+import com.anibalbastias.android.foreignexchange.factory.CurrencyFactory.makeUiCurrencies
+import com.anibalbastias.android.foreignexchange.factory.CurrencyFactory.makeUiCurrencyItem
+import com.anibalbastias.android.foreignexchange.factory.CurrencyFactory.makeUiCurrencyListByBase
+import com.anibalbastias.android.foreignexchange.factory.foundation.RandomFactory
+import com.anibalbastias.android.foreignexchange.presentation.ui.currencies.mapper.CurrenciesUiMapper
+import com.anibalbastias.android.foreignexchange.presentation.ui.currencies.model.UiCurrencies
+import com.anibalbastias.android.foreignexchange.presentation.util.empty
+import com.nhaarman.mockitokotlin2.*
+import io.reactivex.observers.DisposableSingleObserver
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotNull
+import org.junit.Rule
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.junit.runners.JUnit4
 import org.mockito.Captor
-import org.mockito.Mock
-import org.mockito.Mockito
 
 /**
- * Created by anibalbastias on 2019-12-01.
+ * Created by Anibal Bastias Soto on 2019-12-19.
  */
 
-class CurrenciesViewModelTest : BaseUnitTest() {
+@RunWith(JUnit4::class)
+class CurrenciesViewModelTest {
 
-    override fun showErrorMessage(): Boolean = false
-
-    override fun initCaptors() {
-        captorBreeds = argumentCaptor()
-    }
-
-    override fun initDataMocks() {
-        getLatestCurrenciesUseCase = mock()
-        getRandomImageBreedUseCase = mock()
-        getDogImagesByBreedUseCase = mock()
-        breedsViewDataMapper = mock()
-    }
-
-    override fun initViewModel() {
-        breedsViewModel = BreedsViewModel(
-            getLatestCurrenciesUseCase,
-            getRandomImageBreedUseCase,
-            getDogImagesByBreedUseCase,
-            breedsViewDataMapper
-        )
-    }
-
-    // region Mocked vars
-    @Mock
-    lateinit var getLatestCurrenciesUseCase: GetLatestCurrenciesUseCase
-    @Mock
-    lateinit var getRandomImageBreedUseCase: GetRandomImageBreedUseCase
-    @Mock
-    lateinit var getDogImagesByBreedUseCase: GetDogImagesByBreedUseCase
-    @Mock
-    lateinit var breedsViewDataMapper: BreedsViewDataMapper
-    // endregion
-
-    // region Captors vars
+    @get:Rule
+    var instantTaskExecutorRule = InstantTaskExecutorRule()
+    private val mapper = mock<CurrenciesUiMapper>()
+    private val getCurrenciesUseCase = mock<GetLatestCurrenciesUseCase>()
+    private val viewModel = CurrenciesViewModel(getCurrenciesUseCase, mapper)
     @Captor
-    private lateinit var captorBreeds: KArgumentCaptor<BaseSubscriber<ForeignExchangeViewData, CurrenciesData>>
-    // endregion
-
-    private lateinit var breedsViewModel: BreedsViewModel
-
-    // region Setup Data
-
-    @Before
-    fun setUp() {
-        initCaptors()
-        initDataMocks()
-        initViewModel()
-    }
-    // endregion
-
-    // region Use Case Execute Testing
+    private val captor = argumentCaptor<DisposableSingleObserver<RemoteCurrencies>>()
 
     @Test
-    fun testGetBreedsUseCase() {
-        breedsViewModel.getBreedListAllData()
-        Mockito.verify(getLatestCurrenciesUseCase, times(1)).execute(any(), anyOrNull())
+    fun `when LatestCustomers Live Data, then return not null`() {
+        assertNotNull(viewModel.getLatestCurrenciesLiveData())
     }
 
     @Test
-    fun testGetRandomImageBreedUseCase() {
-        breedsViewModel.getRandomImageBreed("germanshepherd")
-        Mockito.verify(getRandomImageBreedUseCase, times(1)).execute(any(), anyOrNull())
+    fun `when getLatestCurrencies, then post Loading state`() {
+        viewModel.getLatestCurrenciesData()
+
+        assert(viewModel.getLatestCurrenciesLiveData().value?.status == ResourceState.LOADING)
     }
 
     @Test
-    fun testGetDogImagesByBreedUseCase() {
-        breedsViewModel.getDogImagesByBreed("akita")
-        Mockito.verify(getDogImagesByBreedUseCase, times(1)).execute(any(), anyOrNull())
-    }
-    // endregion
+    fun `given LatestCurrencies, when get LatestCurrencies on success, then post success state`() {
+        val currencies = makeRemoteCurrencies()
 
-    // region LiveData Status GetBreeds
+        viewModel.getLatestCurrenciesData()
+        verify(getCurrenciesUseCase).execute(captor.capture(), eq("HRK"))
+        captor.firstValue.onSuccess(currencies)
+
+        assert(viewModel.getLatestCurrenciesLiveData().value?.status == ResourceState.SUCCESS)
+    }
 
     @Test
-    fun testStatusLiveDataGetBreedsCompleteItem_isLoading() {
-        breedsViewModel.let { viewModel ->
-            breedsViewModel.getBreedListAllData()
+    fun `given LatestCurrencies, when getLatestCurrencies on success, then post success state with data`() {
+        val currencies = makeRemoteCurrencies()
+        val currenciesUi = makeUiCurrencies()
+        stubCurrenciesMapperToUi(currencies, currenciesUi)
 
-            Mockito.verify(getLatestCurrenciesUseCase, times(1))
-                .execute(captorBreeds.capture(), anyOrNull())
+        viewModel.getLatestCurrenciesData()
+        verify(getCurrenciesUseCase).execute(captor.capture(), eq("HRK"))
+        captor.firstValue.onSuccess(currencies)
 
-            assertEquals(true, viewModel.isLoading.get())
-            assertEquals(false, viewModel.isError.get())
-            assertNotNull(viewModel.getBreedsLiveData().value)
-            assertEquals(ResourceState.LOADING, viewModel.getBreedsLiveData().value?.status)
+        assertEquals(currenciesUi, viewModel.getLatestCurrenciesLiveData().value?.data)
+    }
+
+    private fun stubCurrenciesMapperToUi(currencies: RemoteCurrencies, currenciesUi: UiCurrencies) {
+        whenever(mapper.executeMapping(currencies)).thenReturn(currenciesUi)
+    }
+
+    @Test
+    fun `when GetLatestCurrencies on error, then post error state`() {
+
+        viewModel.getLatestCurrenciesData()
+        verify(getCurrenciesUseCase).execute(captor.capture(), eq("HRK"))
+        captor.firstValue.onError(Exception())
+
+        assert(viewModel.getLatestCurrenciesLiveData().value?.status == ResourceState.ERROR)
+    }
+
+    @Test
+    fun `when getLatestCurrencies on error, then post error state with message`() {
+
+        viewModel.getLatestCurrenciesData()
+        verify(getCurrenciesUseCase).execute(captor.capture(), eq("HRK"))
+        captor.firstValue.onError(Exception())
+
+        assertEquals(null, viewModel.getLatestCurrenciesLiveData().value?.message)
+    }
+
+    @Test
+    fun `when on cleared, then Dispose`() {
+        viewModel.onCleared()
+        verify(getCurrenciesUseCase).dispose()
+    }
+
+    @Test
+    fun `when getFormattedValue, then returns a value`() {
+        viewModel.currencyFactor.set(1.0)
+        assert(viewModel.getFormattedValue("1.23456") == "1.23")
+    }
+
+    @Test
+    fun `when getCurrencyItem, then returns UICurrencyItem data`() {
+        val currency = RandomFactory.generateString()
+        viewModel.currencyFactor.set(1.0)
+        viewModel.currencySelected.set(makeUiCurrencyItem(currency))
+
+        makeMapEntryCurrency(count = 5).map {
+            assert(viewModel.getCurrencyItem(it).currency == viewModel.currencySelected.get()?.currency)
         }
     }
 
     @Test
-    fun testStatusLiveDataGetBreedsCompleteItem_isError() {
-        val methodName = "${object : Any() {}.javaClass.enclosingMethod?.name}()"
+    fun `give Edit Text with value, when onTextChanged for EditText, then update CurrencyFactor`() {
+        val factor = RandomFactory.generateDouble()
+        val baseCurrency = RandomFactory.generateString()
+        val currencies = makeUiCurrencyListByBase(count = 5, base = baseCurrency)
 
-        breedsViewModel.let { viewModel ->
-            breedsViewModel.getBreedListAllData()
+        viewModel.apply {
+            currencyList.set(currencies)
+            currencyFactor.set(factor)
+            onTextChanged(factor.toString(), 0, 0, 0)
 
-            captorBreeds.let {
-                Mockito.verify(getLatestCurrenciesUseCase, times(1))
-                    .execute(it.capture(), anyOrNull())
-                it.firstValue.onComplete()
-                it.firstValue.onError(getErrorMessage(showErrorMessage(), methodName))
+            currencyList.get()?.forEach {
+                it.value?.set(getFormattedValue(it.value?.get()))
+                assert(
+                    getFormattedValue(it.value?.get()) == "${String.format(
+                        "%.2f",
+                        currencyFactor.get() * it.value?.get()?.toDouble()!!
+                    ).toDouble()}"
+                )
             }
-
-            assertEquals(false, viewModel.isLoading.get())
-            assertEquals(true, viewModel.isError.get())
-            assertNotNull(viewModel.getBreedsLiveData().value)
-            assertEquals(ResourceState.ERROR, viewModel.getBreedsLiveData().value?.status)
         }
     }
 
     @Test
-    fun testStatusLiveDataGetRandomImageBreedCompleteItem_isLoading() {
-        breedsViewModel.let { viewModel ->
-            breedsViewModel.getRandomImageBreed("collie")
+    fun `give Edit Text without value, when onTextChanged for EditText, then update CurrencyFactor`() {
+        val baseCurrency = RandomFactory.generateString()
+        val currencies = makeUiCurrencyListByBase(count = 5, base = baseCurrency)
 
-            Mockito.verify(getRandomImageBreedUseCase, times(1))
-                .execute(captorBreeds.capture(), anyOrNull())
+        viewModel.apply {
+            currencyList.set(currencies)
+            currencyFactor.set(1.0)
+            onTextChanged(String.empty(), 0, 0, 0)
 
-            assertEquals(false, viewModel.isError.get())
-            assertNotNull(viewModel.getBreedsImageLiveData().value)
-            assertEquals(ResourceState.LOADING, viewModel.getBreedsImageLiveData().value?.status)
-        }
-    }
-
-    @Test
-    fun testStatusLiveDataGetRandomImageBreedCompleteItem_isError() {
-        val methodName = "${object : Any() {}.javaClass.enclosingMethod?.name}()"
-
-        breedsViewModel.let { viewModel ->
-            breedsViewModel.getRandomImageBreed("wolfhound")
-
-            captorBreeds.let {
-                Mockito.verify(getRandomImageBreedUseCase, times(1))
-                    .execute(it.capture(), anyOrNull())
-                it.firstValue.onComplete()
-                it.firstValue.onError(getErrorMessage(showErrorMessage(), methodName))
+            currencyList.get()?.forEach {
+                it.value?.set(getFormattedValue(it.value?.get()))
+                assert(
+                    getFormattedValue(it.value?.get()) == "${String.format(
+                        "%.2f",
+                        currencyFactor.get() * it.value?.get()?.toDouble()!!
+                    ).toDouble()}"
+                )
             }
-
-            assertEquals(false, viewModel.isLoading.get())
-            assertEquals(true, viewModel.isError.get())
-            assertNotNull(viewModel.getBreedsImageLiveData().value)
-            assertEquals(ResourceState.ERROR, viewModel.getBreedsImageLiveData().value?.status)
         }
     }
 
     @Test
-    fun testStatusLiveDataGetDogImagesByBreedCompleteItem_isLoading() {
-        breedsViewModel.let { viewModel ->
-            breedsViewModel.getDogImagesByBreed("terrier")
+    fun `when onFlagCurrency changes, then currency selected updates`() {
+        val currency = RandomFactory.generateString()
+        val currencyUiSelected = makeUiCurrencyItem(currency)
+        val currencies = makeUiCurrencyListByBase(count = 5, base = currency)
 
-            Mockito.verify(getDogImagesByBreedUseCase, times(1))
-                .execute(captorBreeds.capture(), anyOrNull())
+        viewModel.apply {
+            currencyList.set(currencies)
+            onFlagCurrencyChange(currencyUiSelected)
 
-            assertEquals(false, viewModel.isError.get())
-            assertNotNull(viewModel.getDogImagesByBreedLiveData().value)
-            assertEquals(ResourceState.LOADING, viewModel.getDogImagesByBreedLiveData().value?.status)
-        }
-    }
+            assert(viewModel.currencySelected.get() == currencyUiSelected)
 
-    @Test
-    fun testStatusLiveDataGetDogImagesByBreedCompleteItem_isError() {
-        val methodName = "${object : Any() {}.javaClass.enclosingMethod?.name}()"
-
-        breedsViewModel.let { viewModel ->
-            breedsViewModel.getDogImagesByBreed("redbone")
-
-            captorBreeds.let {
-                Mockito.verify(getDogImagesByBreedUseCase, times(1))
-                    .execute(it.capture(), anyOrNull())
-                it.firstValue.onComplete()
-                it.firstValue.onError(getErrorMessage(showErrorMessage(), methodName))
+            currencyList.get()?.forEach {
+                it.currency?.set(currencySelected.get()?.title)
+                assert(it.currency?.get() == currencySelected.get()?.title)
             }
-
-            assertEquals(false, viewModel.isLoading.get())
-            assertEquals(true, viewModel.isError.get())
-            assertNotNull(viewModel.getDogImagesByBreedLiveData().value)
-            assertEquals(ResourceState.ERROR, viewModel.getDogImagesByBreedLiveData().value?.status)
         }
     }
-    // endregion
+
+    @Test
+    fun `give new Latest currencies for first time, when setLatestCurrenciesUi, then creates currencies list`() {
+        val currencies = makeUiCurrencies()
+
+        viewModel.apply {
+            isLoading.set(false)
+            isError.set(false)
+            currencyList.set(arrayListOf())
+
+            assert(viewModel.currencyList.get()?.isEmpty() == true)
+
+            setLatestCurrenciesUi(currencies)
+
+            assert(viewModel.currencyList.get()?.isEmpty() == false)
+        }
+    }
+
+    @Test
+    fun `give new Latest currencies, when setLatestCurrenciesUi, then updates currencies list`() {
+        val currencies = makeUiCurrencies()
+        val baseCurrency = RandomFactory.generateString()
+
+        val oldCurrencyList = makeUiCurrencyListByBase(count = 5, base = baseCurrency)
+        val newCurrencyList = makeUiCurrencyListByBase(count = 5, base = baseCurrency)
+
+        viewModel.apply {
+            isLoading.set(false)
+            isError.set(false)
+            currencyList.set(oldCurrencyList)
+
+            setLatestCurrenciesUi(currencies)
+
+            currencyList.get()?.zip(newCurrencyList)?.mapIndexed { index, pair ->
+                if (pair.first.currency == pair.second.currency) {
+                    currencyList.get()?.get(index)
+                        ?.value?.set(getFormattedValue(oldCurrencyList[index].value?.get()))
+
+                    assert(
+                        currencyList.get()?.get(index)?.value?.get() == getFormattedValue(
+                            oldCurrencyList[index].value?.get()
+                        )
+                    )
+                }
+            }
+        }
+
+        assert(viewModel.currencyList.get()?.isNotEmpty() == true)
+    }
 }

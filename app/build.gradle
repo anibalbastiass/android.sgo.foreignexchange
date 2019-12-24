@@ -132,23 +132,23 @@ dependencies {
     kapt presentationDependencies.glideCompiler
 
     // Jetpack Navigation
-    def testDependencies = rootProject.ext.archComponentsDep
-    implementation testDependencies.activityKtx
-    implementation testDependencies.fragmentKtx
-    implementation testDependencies.navigationKtx
-    implementation testDependencies.coreKtx
-    implementation testDependencies.saveStateKtx
+    def archComponentsDep = rootProject.ext.archComponentsDep
+    implementation archComponentsDep.activityKtx
+    implementation archComponentsDep.fragmentKtx
+    implementation archComponentsDep.navigationKtx
+    implementation archComponentsDep.coreKtx
+    implementation archComponentsDep.saveStateKtx
 
-    // Core Testing
-    testImplementation testDependencies.testJunit
-    testImplementation testDependencies.coreTesting
-
-    // Roboelectric: Integration tests
-    testImplementation testDependencies.robolectric
-    testImplementation testDependencies.robolectricMultidex
-    testImplementation testDependencies.mockitoKotlin
-    testImplementation testDependencies.androidXTestCore
-    testImplementation testDependencies.mockitoInline
+//    // Core Testing
+//    testImplementation testDependencies.testJunit
+//    testImplementation testDependencies.coreTesting
+//
+//    // Roboelectric: Integration tests
+//    testImplementation testDependencies.robolectric
+//    testImplementation testDependencies.robolectricMultidex
+//    testImplementation testDependencies.mockitoKotlin
+//    testImplementation testDependencies.androidXTestCore
+//    testImplementation testDependencies.mockitoInline
 
     /* Coroutines */
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version"
@@ -156,4 +156,31 @@ dependencies {
     testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines_version"
     testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutines_version"
 
+    // Test Dependencies
+    def testDependencies = rootProject.ext.testCoreDep
+    testImplementation testDependencies.mockito
+    testImplementation testDependencies.mockitoKotlin
+    testImplementation testDependencies.jUnit
+    testImplementation testDependencies.robolectric
+    testImplementation testDependencies.archTesting
+    testImplementation testDependencies.testCore
+    testImplementation testDependencies.runner
+    testImplementation testDependencies.xTestRules
+    testImplementation testDependencies.extJUnit
+    testImplementation testDependencies.espressoCore
+    testImplementation testDependencies.extTruth
+    testImplementation testDependencies.xEspressoCore
+    testImplementation testDependencies.xEspressoContrib
+    testImplementation testDependencies.espressoIntents
+    testImplementation testDependencies.mockk
+
+    implementation testDependencies.fragment
+    debugImplementation testDependencies.fragmentTesting
+
+    androidTestImplementation testDependencies.testRunner
+    androidTestImplementation testDependencies.testRules
+    androidTestImplementation testDependencies.espressoIntents
+    androidTestImplementation(testDependencies.espressoCore, {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
 }

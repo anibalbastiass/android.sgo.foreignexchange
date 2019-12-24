@@ -22,13 +22,13 @@ ext {
     lyfeCycleExtVersion = '2.1.0'
     materialVersion = '1.0.0'
     lifeCycleJava8Version = '2.1.0'
-    daggerVersion = '2.15'
+    daggerVersion = '2.23.1'
     butterKnifeVersion = '8.8.1'
     roomVersion = '1.1.1'
     androidArchVersion = '1.1.1'
-    rxJavaVersion = '2.0.2'
-    rxAndroidVersion = '2.0.1'
-    javaxAnnotationVersion = '1.0'
+    rxJavaVersion = '2.1.1'
+    rxAndroidVersion = '2.1.0'
+    javaxAnnotationVersion = '1.3.2'
     gsonVersion = '2.3'
     retrofitVersion = '2.3.0'
     okHttpVersion = '3.6.0'
@@ -39,8 +39,6 @@ ext {
     playServicesLibrariesVersion = '15.0.2'
     constraintLayoutVersion = '1.1.3'
 
-    junitVersion = '4.12'
-    runnerVersion = '1.0.2'
     expressoVersion = '3.0.2'
 
     javaLifeCycleVersion = '1.1.1'
@@ -51,48 +49,65 @@ ext {
 
     coroutines_version = "1.3.0"
 
+    //Testing
+    mockitoVersion = '2.15.0'
+    mockitoKotlinVersion = '2.0.0'
+    jUnitVersion = '4.12'
+    junitVersion = '4.12'
+    robolectricVersion = '4.2.1'
+    runnerTestVersion = '1.0.2'
+    rulesTestVersion = '1.0.2'
+    espressoVersion = '3.0.2'
+    xEspressoVersion = '3.1.0'
+    xTestCoreVersion = '1.0.0'
+    runnerVersion = '1.1.0'
+    rulesVersion = '1.1.0'
+    extVersion = '1.0.0'
+    fragmentTestingVersion = '1.1.0'
+    mockkVersion = '1.9.3'
+
     globalforeignExchangeDependencies = [
             FOREIGN_EXCHANGE_BASE_ENDPOINT: "https://api.exchangeratesapi.io/"
     ]
 
     foreignExchangeDependencies = [daggerAndroidCompiler   : "com.google.dagger:dagger-android-processor:${daggerVersion}",
-                            daggerAndroid           : "com.google.dagger:dagger-android-support:${daggerVersion}",
-                            daggerCompiler          : "com.google.dagger:dagger-compiler:${daggerVersion}",
-                            dagger                  : "com.google.dagger:dagger:${daggerVersion}",
-                            butterKnife             : "com.jakewharton:butterknife:${butterKnifeVersion}",
-                            butterKnifeCompiler     : "com.jakewharton:butterknife-compiler:${butterKnifeVersion}",
-                            androidRecyclerView     : 'androidx.recyclerview:recyclerview:1.0.0',
-                            androidCardView         : 'androidx.cardview:cardview:1.0.0',
-                            androidDesign           : "com.google.android.material:material:${materialVersion}",
-                            androidCompatv7         : "androidx.appcompat:appcompat:${appCompatVersion}",
-                            androidSupportv4        : 'androidx.legacy:legacy-support-v4:1.0.0',
-                            rxJava                  : "io.reactivex.rxjava2:rxkotlin:${rxJavaVersion}",
-                            rxAndroid               : "io.reactivex.rxjava2:rxandroid:${rxAndroidVersion}",
-                            javaxAnnotation         : "javax.annotation:jsr250-api:${javaxAnnotationVersion}",
+                                   daggerAndroid           : "com.google.dagger:dagger-android-support:${daggerVersion}",
+                                   daggerCompiler          : "com.google.dagger:dagger-compiler:${daggerVersion}",
+                                   dagger                  : "com.google.dagger:dagger:${daggerVersion}",
+                                   butterKnife             : "com.jakewharton:butterknife:${butterKnifeVersion}",
+                                   butterKnifeCompiler     : "com.jakewharton:butterknife-compiler:${butterKnifeVersion}",
+                                   androidRecyclerView     : 'androidx.recyclerview:recyclerview:1.0.0',
+                                   androidCardView         : 'androidx.cardview:cardview:1.0.0',
+                                   androidDesign           : "com.google.android.material:material:${materialVersion}",
+                                   androidCompatv7         : "androidx.appcompat:appcompat:${appCompatVersion}",
+                                   androidSupportv4        : 'androidx.legacy:legacy-support-v4:1.0.0',
+                                   rxJava                  : "io.reactivex.rxjava2:rxkotlin:${rxJavaVersion}",
+                                   rxAndroid               : "io.reactivex.rxjava2:rxandroid:${rxAndroidVersion}",
+                                   javaxAnnotation         : "javax.annotation:jsr250-api:${javaxAnnotationVersion}",
 
-                            rxKotlin                : "io.reactivex:rxkotlin:${rxKotlinVersion}",
-                            multidex                : 'androidx.multidex:multidex:2.0.0',
-                            retrofit2               : "com.squareup.retrofit2:retrofit:${retrofitVersion}",
-                            retrofit2Converter      : "com.squareup.retrofit2:converter-gson:${retrofitVersion}",
-                            retrofit2RxAdapter      : "com.squareup.retrofit2:adapter-rxjava2:${retrofitVersion}",
-                            gson                    : "com.google.code.gson:gson:${gsonVersion}",
-                            okHttpLoggingInterceptor: "com.squareup.okhttp3:logging-interceptor:${okHttpVersion}",
-                            okhttp                  : "com.squareup.okhttp3:okhttp:${okHttpVersion}",
-                            okhttpUrlconnection     : "com.squareup.okhttp3:okhttp-urlconnection:${okHttpVersion}",
-                            kotlinStdlib            : "org.jetbrains.kotlin:kotlin-stdlib-jdk7:${kotlin_version}",
-                            androidArchExt          : "androidx.lifecycle:lifecycle-extensions:${lyfeCycleExtVersion}",
-                            androidArchCompiler     : 'androidx.lifecycle:lifecycle-compiler:2.0.0',
-                            room                    : 'androidx.room:room-runtime:2.0.0',
-                            roomCompiler            : 'androidx.room:room-compiler:2.0.0',
-                            roomRxJava              : 'androidx.room:room-rxjava2:2.0.0',
-                            lcReactiveStreams       : 'androidx.lifecycle:lifecycle-reactivestreams:2.0.0',
-                            glide                   : "com.github.bumptech.glide:glide:${glideVersion}",
-                            glideCompiler           : "com.github.bumptech.glide:compiler:${glideVersion}",
-                            constraintLayout        : "androidx.constraintlayout:constraintlayout:${constraintLayoutVersion}",
-                            lifeCycleJava8Dep       : "androidx.lifecycle:lifecycle-common-java8:${lifeCycleJava8Version}",
-                            stetho                  : "com.facebook.stetho:stetho:1.5.0",
-                            stethoRealm             : "com.uphyca:stetho_realm:2.3.0",
-                            internetAvaibility      : 'com.treebo:internetavailabilitychecker:1.0.4'
+                                   rxKotlin                : "io.reactivex:rxkotlin:${rxKotlinVersion}",
+                                   multidex                : 'androidx.multidex:multidex:2.0.0',
+                                   retrofit2               : "com.squareup.retrofit2:retrofit:${retrofitVersion}",
+                                   retrofit2Converter      : "com.squareup.retrofit2:converter-gson:${retrofitVersion}",
+                                   retrofit2RxAdapter      : "com.squareup.retrofit2:adapter-rxjava2:${retrofitVersion}",
+                                   gson                    : "com.google.code.gson:gson:${gsonVersion}",
+                                   okHttpLoggingInterceptor: "com.squareup.okhttp3:logging-interceptor:${okHttpVersion}",
+                                   okhttp                  : "com.squareup.okhttp3:okhttp:${okHttpVersion}",
+                                   okhttpUrlconnection     : "com.squareup.okhttp3:okhttp-urlconnection:${okHttpVersion}",
+                                   kotlinStdlib            : "org.jetbrains.kotlin:kotlin-stdlib-jdk7:${kotlin_version}",
+                                   androidArchExt          : "androidx.lifecycle:lifecycle-extensions:${lyfeCycleExtVersion}",
+                                   androidArchCompiler     : 'androidx.lifecycle:lifecycle-compiler:2.0.0',
+                                   room                    : 'androidx.room:room-runtime:2.0.0',
+                                   roomCompiler            : 'androidx.room:room-compiler:2.0.0',
+                                   roomRxJava              : 'androidx.room:room-rxjava2:2.0.0',
+                                   lcReactiveStreams       : 'androidx.lifecycle:lifecycle-reactivestreams:2.0.0',
+                                   glide                   : "com.github.bumptech.glide:glide:${glideVersion}",
+                                   glideCompiler           : "com.github.bumptech.glide:compiler:${glideVersion}",
+                                   constraintLayout        : "androidx.constraintlayout:constraintlayout:${constraintLayoutVersion}",
+                                   lifeCycleJava8Dep       : "androidx.lifecycle:lifecycle-common-java8:${lifeCycleJava8Version}",
+                                   stetho                  : "com.facebook.stetho:stetho:1.5.0",
+                                   stethoRealm             : "com.uphyca:stetho_realm:2.3.0",
+                                   internetAvaibility      : 'com.treebo:internetavailabilitychecker:1.0.4'
 
     ]
 
@@ -220,5 +235,28 @@ ext {
             coreKtx            : 'androidx.core:core-ktx:1.2.0-rc01',
             saveStateKtx       : 'androidx.lifecycle:lifecycle-viewmodel-savedstate:1.0.0-rc02',
             mockitoInline      : "org.mockito:mockito-inline:3.0.0"
+    ]
+
+    // Test Core dependencies
+    testCoreDep = [
+            jUnit:              "junit:junit:${jUnitVersion}",
+            mockito:            "org.mockito:mockito-core:${mockitoVersion}",
+            mockitoKotlin:      "com.nhaarman.mockitokotlin2:mockito-kotlin:${mockitoKotlinVersion}",
+            robolectric:        "org.robolectric:robolectric:${robolectricVersion}",
+            testRunner:         'androidx.test:runner:1.1.0',
+            testRules:          'androidx.test:rules:1.1.0',
+            espressoIntents:    'androidx.test.espresso:espresso-intents:3.1.0',
+            espressoCore:       'androidx.test.espresso:espresso-core:3.1.0',
+            archTesting:        'androidx.arch.core:core-testing:2.0.0',
+            testCore:           "androidx.test:core:${xTestCoreVersion}",
+            runner:             "androidx.test:runner:${runnerVersion}",
+            extJUnit:           "androidx.test.ext:junit:${extVersion}",
+            xEspressoCore:      "androidx.test.espresso:espresso-core:${xEspressoVersion}",
+            extTruth:           "androidx.test.ext:truth:${extVersion}",
+            xTestRules:         "androidx.test:rules:${rulesVersion}",
+            xEspressoContrib:   "androidx.test.espresso:espresso-contrib:${xEspressoVersion}",
+            fragmentTesting:    "androidx.fragment:fragment-testing:${fragmentTestingVersion}",
+            fragment:           "androidx.fragment:fragment:${fragmentTestingVersion}",
+            mockk:              "io.mockk:mockk:${mockkVersion}"
     ]
 }

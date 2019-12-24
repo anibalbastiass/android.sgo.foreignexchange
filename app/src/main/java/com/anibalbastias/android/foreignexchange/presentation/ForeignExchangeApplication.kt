@@ -8,7 +8,7 @@ import com.anibalbastias.android.foreignexchange.base.view.BaseModuleFragment
 import com.anibalbastias.android.foreignexchange.presentation.component.ApplicationComponent
 import com.anibalbastias.android.foreignexchange.presentation.component.DaggerApplicationComponent
 import com.anibalbastias.android.foreignexchange.presentation.module.ApplicationModule
-import com.bumptech.glide.request.target.ViewTarget
+import com.bumptech.glide.request.target.ViewTarget.*
 
 var context: ForeignExchangeApplication? = null
 fun getAppContext(): ForeignExchangeApplication {
@@ -24,7 +24,6 @@ class ForeignExchangeApplication : MultiDexApplication() {
     companion object {
         lateinit var appContext: Context
         var applicationComponent: ApplicationComponent? = null
-        var isTest: Boolean? = false
     }
 
     override fun onCreate() {
@@ -34,7 +33,7 @@ class ForeignExchangeApplication : MultiDexApplication() {
         appContext = this
 
         // Glide Tag
-        ViewTarget.setTagId(R.id.glide_tag)
+        setTagId(R.id.glide_tag)
     }
 
 }

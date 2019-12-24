@@ -6,7 +6,7 @@ import com.anibalbastias.android.foreignexchange.presentation.util.empty
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize
-data class CurrencyItemViewData(
+data class UiCurrencyItem(
 
     var title: String? = "HRK",
     val imageUrl: String? = String.empty(),

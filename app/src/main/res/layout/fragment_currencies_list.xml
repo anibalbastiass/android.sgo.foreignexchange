@@ -33,13 +33,16 @@
             app:layout_constraintTop_toTopOf="parent"
             app:theme="@style/ToolBarDetailsStyle"
             app:titleTextColor="@color/primaryColor"
-            tools:title="@string/app_name" >
+            tools:title="@string/app_name">
 
             <ImageView
-                android:layout_width="45dp"
-                android:layout_height="45dp"
-                android:src="@drawable/ic_placeholder"
+                android:id="@+id/currenciesToolbarLogo"
+                android:layout_width="38dp"
+                android:layout_height="38dp"
+                android:padding="5dp"
                 android:gravity="start"
+                android:src="@drawable/ic_placeholder"
+                android:tag="currenciesToolbarLogo"
                 android:tint="@color/primaryColor" />
 
         </androidx.appcompat.widget.Toolbar>
@@ -65,11 +68,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="15dp"
-            bind:currenciesViewModel="@{currenciesViewModel}"
             android:visibility="@{currenciesViewModel.isLoading == false ? View.VISIBLE : View.GONE}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/currenciesToolbar" />
+            app:layout_constraintTop_toBottomOf="@+id/currenciesToolbar"
+            bind:currenciesViewModel="@{currenciesViewModel}" />
 
         <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
             android:id="@+id/currenciesListSwipeRefreshLayout"

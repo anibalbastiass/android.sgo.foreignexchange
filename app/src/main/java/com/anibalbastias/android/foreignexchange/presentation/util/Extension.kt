@@ -21,7 +21,7 @@ import com.anibalbastias.android.foreignexchange.R
 import com.anibalbastias.android.foreignexchange.base.view.Resource
 import com.anibalbastias.android.foreignexchange.base.view.ResourceState
 import com.anibalbastias.android.foreignexchange.presentation.GlideApp
-import com.anibalbastias.android.foreignexchange.presentation.ui.currencies.model.CurrencyItemViewData
+import com.anibalbastias.android.foreignexchange.presentation.ui.currencies.model.UiCurrencyItem
 import com.anibalbastias.android.foreignexchange.presentation.util.spinner.SpinnerExtensions
 import com.anibalbastias.android.foreignexchange.presentation.util.spinner.SpinnerExtensions.setFlagSpinnerValue
 import com.anibalbastias.android.foreignexchange.presentation.util.spinner.SpinnerExtensions.setFlagsSpinnerEntries
@@ -213,7 +213,7 @@ fun getFlagUrlByBase(base: String): String =
     "https://www.countryflags.io/${base.substring(0, 2).toLowerCase()}/flat/64.png"
 
 @BindingAdapter("entries")
-fun Spinner.setEntries(entries: List<CurrencyItemViewData>?) {
+fun Spinner.setEntries(entries: List<UiCurrencyItem>?) {
     entries?.let {
         setFlagsSpinnerEntries(it)
     }
@@ -227,7 +227,7 @@ fun Spinner.setItemSelectedListener(itemSelectedListener: SpinnerExtensions.Item
 }
 
 @BindingAdapter("newValue")
-fun Spinner.setNewValue(newValue: CurrencyItemViewData?) {
+fun Spinner.setNewValue(newValue: UiCurrencyItem?) {
     newValue?.let {
         setFlagSpinnerValue(it)
     }

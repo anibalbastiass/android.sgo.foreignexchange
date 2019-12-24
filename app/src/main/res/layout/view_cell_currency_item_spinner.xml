@@ -10,7 +10,7 @@
 
         <variable
             name="item"
-            type="com.anibalbastias.android.foreignexchange.presentation.ui.currencies.model.CurrencyItemViewData" />
+            type="com.anibalbastias.android.foreignexchange.presentation.ui.currencies.model.UiCurrencyItem" />
 
     </data>
 
@@ -22,7 +22,7 @@
         android:minHeight="60dp">
 
         <ImageView
-            android:id="@+id/currenciesItemImageView"
+            android:id="@+id/currenciesSpinnerImageView"
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_marginStart="10dp"
@@ -34,11 +34,12 @@
             bind:layout_constraintStart_toStartOf="parent"
             bind:layout_constraintTop_toTopOf="parent"
             bind:setImageUrl="@{item.imageUrl}"
+            android:tag="currenciesSpinnerImageView"
             tools:ignore="UnusedAttribute"
             tools:src="@drawable/ic_placeholder" />
 
         <TextView
-            android:id="@+id/currenciesItemTitle"
+            android:id="@+id/currenciesSpinnerTitle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:autoSizeTextType="uniform"
