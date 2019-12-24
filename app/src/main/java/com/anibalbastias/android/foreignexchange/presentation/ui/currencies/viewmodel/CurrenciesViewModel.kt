@@ -20,7 +20,7 @@ import javax.inject.Inject
  * Created by anibalbastias on 2019-11-25.
  */
 
-class CurrenciesViewModel @Inject constructor(
+open class CurrenciesViewModel @Inject constructor(
     private val getLatestCurrenciesUseCase: GetLatestCurrenciesUseCase,
     private val currenciesUiMapper: CurrenciesUiMapper
 ) : BaseViewModel() {

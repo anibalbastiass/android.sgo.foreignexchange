@@ -7,7 +7,7 @@ import org.robolectric.RuntimeEnvironment
 
 object ResourceLocator {
 
-    fun getString (stringId : Int): String {
+    fun getString(stringId: Int): String {
         return getApplicationContext<ForeignExchangeApplication>().getString(stringId)
     }
 

@@ -27,20 +27,20 @@ open class CurrenciesFragment : BaseModuleFragment(), BaseBindClickHandler<UiCur
     override fun tagName(): String = this::class.java.simpleName
     override fun layoutId(): Int = R.layout.fragment_currencies_list
 
-    private lateinit var binding: FragmentCurrenciesListBinding
-    private lateinit var currenciesViewModel: CurrenciesViewModel
+    lateinit var binding: FragmentCurrenciesListBinding
+    lateinit var currenciesViewModel: CurrenciesViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setupInjection()
-        navBaseViewModel = getViewModel(viewModelFactory)
-        currenciesViewModel = getViewModel(viewModelFactory)
-        sharedViewModel = activity!!.getViewModel(SavedStateViewModelFactory(getAppContext(), this))
         setHasOptionsMenu(true)
     }
 
     open fun setupInjection() {
         appComponent().inject(this)
+        navBaseViewModel = getViewModel(viewModelFactory)
+        currenciesViewModel = getViewModel(viewModelFactory)
+        sharedViewModel = activity!!.getViewModel(SavedStateViewModelFactory(getAppContext(), this))
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

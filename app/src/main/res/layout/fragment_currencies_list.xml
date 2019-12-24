@@ -37,8 +37,9 @@
 
             <ImageView
                 android:id="@+id/currenciesToolbarLogo"
-                android:layout_width="45dp"
-                android:layout_height="45dp"
+                android:layout_width="38dp"
+                android:layout_height="38dp"
+                android:padding="5dp"
                 android:gravity="start"
                 android:src="@drawable/ic_placeholder"
                 android:tag="currenciesToolbarLogo"
