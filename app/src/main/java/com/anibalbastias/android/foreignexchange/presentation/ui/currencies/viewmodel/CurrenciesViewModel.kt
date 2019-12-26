@@ -1,17 +1,16 @@
 package com.anibalbastias.android.foreignexchange.presentation.ui.currencies.viewmodel
 
-import androidx.databinding.*
-import androidx.lifecycle.MutableLiveData
+import androidx.databinding.ObservableBoolean
+import androidx.databinding.ObservableDouble
+import androidx.databinding.ObservableField
+import androidx.databinding.ObservableInt
 import com.anibalbastias.android.foreignexchange.R
-import com.anibalbastias.android.foreignexchange.base.subscriber.BaseSubscriber
 import com.anibalbastias.android.foreignexchange.base.view.BaseViewModel
-import com.anibalbastias.android.foreignexchange.base.view.Resource
-import com.anibalbastias.android.foreignexchange.base.view.ResourceState
 import com.anibalbastias.android.foreignexchange.domain.currencies.usecase.GetLatestCurrenciesUseCase
-import com.anibalbastias.android.foreignexchange.presentation.context
-import com.anibalbastias.android.foreignexchange.presentation.ui.currencies.mapper.CurrenciesUiMapper
 import com.anibalbastias.android.foreignexchange.presentation.ui.currencies.model.UiCurrencies
 import com.anibalbastias.android.foreignexchange.presentation.ui.currencies.model.UiCurrencyItem
+import com.anibalbastias.android.foreignexchange.presentation.util.LiveResult
+import com.anibalbastias.android.foreignexchange.presentation.util.empty
 import com.anibalbastias.android.foreignexchange.presentation.util.getFlagUrlByBase
 import javax.inject.Inject
 
@@ -21,8 +20,7 @@ import javax.inject.Inject
  */
 
 open class CurrenciesViewModel @Inject constructor(
-    private val getLatestCurrenciesUseCase: GetLatestCurrenciesUseCase,
-    private val currenciesUiMapper: CurrenciesUiMapper
+    private val getLatestCurrenciesUseCase: GetLatestCurrenciesUseCase
 ) : BaseViewModel() {
 
     // region Observables
@@ -40,14 +38,8 @@ open class CurrenciesViewModel @Inject constructor(
 
     var currencyItemLayout: Int? = R.layout.view_cell_currency_item
 
-    public override fun onCleared() {
-        getLatestCurrenciesUseCase.dispose()
-        super.onCleared()
-    }
-
     //region Live Data
-    private val getLatestUiCurrenciesLiveData: MutableLiveData<Resource<UiCurrencies?>> =
-        MutableLiveData()
+    private val getLatestUiCurrenciesLiveData = LiveResult<UiCurrencies>()
 
     fun getLatestCurrenciesLiveData() = getLatestUiCurrenciesLiveData
     //endregion
@@ -57,13 +49,10 @@ open class CurrenciesViewModel @Inject constructor(
 
     fun getLatestCurrenciesData() {
         isLoading.set(true)
-        getLatestUiCurrenciesLiveData.postValue(Resource(ResourceState.LOADING, null, null))
 
-        return getLatestCurrenciesUseCase.execute(
-            BaseSubscriber(
-                context?.applicationContext, this, currenciesUiMapper,
-                getLatestUiCurrenciesLiveData, isLoading, isError
-            ), currencySelected.get()?.title
+        getLatestCurrenciesUseCase.execute(
+            liveData = getLatestUiCurrenciesLiveData,
+            params = currencySelected.get()?.title ?: String.empty()
         )
     }
 

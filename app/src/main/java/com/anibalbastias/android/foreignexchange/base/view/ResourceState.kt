@@ -5,13 +5,8 @@ package com.anibalbastias.android.foreignexchange.base.view
  */
 
 enum class ResourceState {
-    SIGN_OUT,
     DEFAULT,
     LOADING,
-    LOADING_REFRESH,
     SUCCESS,
-    PAGING_SUCCESS,
-    ERROR,
-    PAGING_ERROR,
-    REFRESH_TOKEN
+    ERROR
 }

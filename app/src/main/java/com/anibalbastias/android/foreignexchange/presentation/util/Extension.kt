@@ -9,17 +9,13 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.databinding.BindingAdapter
 import androidx.databinding.ObservableInt
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.anibalbastias.android.foreignexchange.R
-import com.anibalbastias.android.foreignexchange.base.view.Resource
-import com.anibalbastias.android.foreignexchange.base.view.ResourceState
 import com.anibalbastias.android.foreignexchange.presentation.GlideApp
 import com.anibalbastias.android.foreignexchange.presentation.ui.currencies.model.UiCurrencyItem
 import com.anibalbastias.android.foreignexchange.presentation.util.spinner.SpinnerExtensions
@@ -100,80 +96,6 @@ fun isTablet(context: Context): Boolean = try {
 fun SwipeRefreshLayout.initSwipe(onSwipeUnit: (() -> Unit)?) {
     this.setColorSchemeColors(ContextCompat.getColor(context, R.color.primaryColor))
     this.setOnRefreshListener { onSwipeUnit?.invoke() }
-}
-
-/**
- * Implements a custom observer
- * to a MutableLiveData object
- */
-fun <T> Fragment.implementObserver(
-    mutableLiveData: MutableLiveData<Resource<T>>,
-    successBlock: (T) -> Unit = {},
-    loadingBlock: () -> Unit = {},
-    errorBlock: (String?) -> Unit = {},
-    defaultBlock: () -> Unit = {},
-    codeBlock: () -> Unit = {},
-    hideLoadingBlock: () -> Unit = {}
-) {
-
-    handleObserver(
-        mutableLiveData,
-        defaultBlock,
-        successBlock,
-        loadingBlock,
-        errorBlock,
-        codeBlock,
-        hideLoadingBlock
-    )
-}
-
-private fun <T> Fragment.handleObserver(
-    mutableLiveData: MutableLiveData<Resource<T>>,
-    defaultBlock: () -> Unit,
-    successBlock: (T) -> Unit,
-    loadingBlock: () -> Unit,
-    errorBlock: (String?) -> Unit,
-    codeBlock: () -> Unit,
-    hideLoadingBlock: () -> Unit = {}
-) {
-    mutableLiveData.initObserver(this) {
-        handleStateObservers(
-            codeBlock,
-            it,
-            defaultBlock,
-            successBlock,
-            loadingBlock,
-            errorBlock,
-            hideLoadingBlock
-        )
-    }
-}
-
-private fun <T> handleStateObservers(
-    codeBlock: () -> Unit,
-    it: Resource<T>?,
-    defaultBlock: () -> Unit,
-    successBlock: (T) -> Unit,
-    loadingBlock: () -> Unit,
-    errorBlock: (String?) -> Unit,
-    hideLoadingBlock: () -> Unit = {}
-) {
-    codeBlock()
-
-    when (it?.status) {
-        ResourceState.DEFAULT -> defaultBlock()
-        ResourceState.SUCCESS -> {
-            hideLoadingBlock()
-            successBlock(it.data!!)
-        }
-        ResourceState.LOADING -> loadingBlock()
-        ResourceState.ERROR -> {
-            hideLoadingBlock()
-            errorBlock(it.message)
-        }
-        else -> {
-        }
-    }
 }
 
 fun <T : androidx.databinding.Observable> T.addOnPropertyChanged(callback: (T) -> Unit) =

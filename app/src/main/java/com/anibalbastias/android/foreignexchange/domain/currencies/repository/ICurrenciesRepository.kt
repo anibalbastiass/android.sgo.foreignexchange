@@ -1,11 +1,11 @@
 package com.anibalbastias.android.foreignexchange.domain.currencies.repository
 
-import com.anibalbastias.android.foreignexchange.data.dataStoreFactory.currency.model.RemoteCurrencies
-import io.reactivex.Single
+import com.anibalbastias.android.foreignexchange.presentation.ui.currencies.model.UiCurrencies
 
 /**
  * Created by anibalbastias on 3/19/18.
  */
+
 interface ICurrenciesRepository {
-    fun getLatestCurrencies(base: String): Single<RemoteCurrencies>
+    suspend fun getLatestCurrencies(base: String): UiCurrencies?
 }

@@ -1,4 +1,4 @@
-package com.anibalbastias.android.foreignexchange.presentation.module
+package com.anibalbastias.android.foreignexchange.di.module
 
 import com.anibalbastias.android.foreignexchange.data.dataStoreFactory.currency.repository.CurrenciesRepositoryImpl
 import com.anibalbastias.android.foreignexchange.domain.currencies.repository.ICurrenciesRepository

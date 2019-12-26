@@ -6,6 +6,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.lifecycle.SavedStateViewModelFactory
 import com.anibalbastias.android.foreignexchange.R
+import com.anibalbastias.android.foreignexchange.base.module.coroutines.Result
 import com.anibalbastias.android.foreignexchange.base.module.getViewModel
 import com.anibalbastias.android.foreignexchange.base.view.BaseModuleFragment
 import com.anibalbastias.android.foreignexchange.databinding.FragmentCurrenciesListBinding
@@ -55,13 +56,32 @@ open class CurrenciesFragment : BaseModuleFragment(), BaseBindClickHandler<UiCur
 
         initToolbar()
         initViewModel()
-        fetchCurrencies()
+    }
+
+    private fun initViewModel() {
+        // Fetch Latest Currencies
+        with(currenciesViewModel) {
+            observe(getLatestCurrenciesLiveData(), ::observeCurrencies)
+            fetchCurrencies()
+        }
+    }
+
+    private fun observeCurrencies(result: Result<UiCurrencies>?) {
+        when (result) {
+            is Result.OnLoading -> currenciesViewModel.isLoading.set(true)
+            is Result.OnSuccess -> {
+                currenciesViewModel.isLoading.set(false)
+                setLatestCurrenciesData(result.value)
+            }
+            is Result.OnError -> showErrorView()
+            else -> showErrorView()
+        }
     }
 
     private fun fetchCurrencies() {
         currenciesViewModel.apply {
-            getLatestCurrenciesLiveData().value?.data?.let {
-                setLatestCurrenciesData(it)
+            getLatestCurrenciesLiveData().value?.let { result ->
+                setLatestCurrenciesData((result as? Result.OnSuccess)?.value)
             } ?: run {
                 isLoading.set(true)
                 getLatestCurrenciesData()
@@ -95,15 +115,6 @@ open class CurrenciesFragment : BaseModuleFragment(), BaseBindClickHandler<UiCur
         binding.currenciesToolbar?.run {
             applyFontForToolbarTitle(activity!!)
             setNoArrowUpToolbar(activity!!)
-        }
-    }
-
-    private fun initViewModel() {
-        // Fetch Latest Currencies
-        currenciesViewModel.run {
-            implementObserver(getLatestCurrenciesLiveData(),
-                successBlock = { viewData -> setLatestCurrenciesData(viewData) },
-                errorBlock = { showErrorView() })
         }
     }
 

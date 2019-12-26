@@ -5,9 +5,9 @@ import androidx.fragment.app.Fragment
 import androidx.multidex.MultiDexApplication
 import com.anibalbastias.android.foreignexchange.R
 import com.anibalbastias.android.foreignexchange.base.view.BaseModuleFragment
-import com.anibalbastias.android.foreignexchange.presentation.component.ApplicationComponent
-import com.anibalbastias.android.foreignexchange.presentation.component.DaggerApplicationComponent
-import com.anibalbastias.android.foreignexchange.presentation.module.ApplicationModule
+import com.anibalbastias.android.foreignexchange.di.component.ApplicationComponent
+import com.anibalbastias.android.foreignexchange.di.component.DaggerApplicationComponent
+import com.anibalbastias.android.foreignexchange.di.module.ApplicationModule
 import com.bumptech.glide.request.target.ViewTarget.*
 
 var context: ForeignExchangeApplication? = null

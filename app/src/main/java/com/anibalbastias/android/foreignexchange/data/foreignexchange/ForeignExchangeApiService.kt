@@ -3,7 +3,7 @@ package com.anibalbastias.android.foreignexchange.data.foreignexchange
 import com.anibalbastias.android.foreignexchange.data.dataStoreFactory.currency.model.RemoteCurrencies
 import com.anibalbastias.android.foreignexchange.data.foreignexchange.ForeignExchangeApiConstants.GET_LATEST_CURRENCIES
 import com.anibalbastias.android.foreignexchange.data.foreignexchange.ForeignExchangeApiConstants.KEY_BASE_CURRENCY
-import io.reactivex.Single
+import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Query
 
@@ -15,7 +15,7 @@ interface ForeignExchangeApiService {
 
     //region Breeds
     @GET(GET_LATEST_CURRENCIES)
-    fun getLatestCurrencies(@Query(KEY_BASE_CURRENCY) base: String): Single<RemoteCurrencies>
+    fun getLatestCurrencies(@Query(KEY_BASE_CURRENCY) base: String): Call<RemoteCurrencies>
     //endregion
 
 }
