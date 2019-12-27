@@ -32,7 +32,7 @@ inline fun <reified R : ViewModel> FragmentActivity.getViewModel(factory: ViewMo
 inline fun <reified R : ViewModel> Fragment.getViewModel(factory: ViewModelFactory): R =
         ViewModelProviders.of(this, factory)[R::class.java]
 
-inline fun <reified R : ViewModel> androidx.fragment.app.FragmentActivity.getViewModel(factory: SavedStateViewModelFactory): R =
+inline fun <reified R : ViewModel> FragmentActivity.getViewModel(factory: SavedStateViewModelFactory): R =
     ViewModelProviders.of(this, factory)[R::class.java]
 
 

@@ -1,4 +1,4 @@
-package com.anibalbastias.android.foreignexchange.presentation.module
+package com.anibalbastias.android.foreignexchange.di.module
 
 import com.anibalbastias.android.foreignexchange.BuildConfig
 import com.anibalbastias.android.foreignexchange.presentation.ForeignExchangeApplication
@@ -21,9 +21,9 @@ import javax.inject.Singleton
 class ForeignExchangeAPIModule {
 
     companion object {
-        private const val CONNECT_TIMEOUT = 120L
-        private const val READ_TIMEOUT = 120L
-        private const val WRITE_TIMEOUT = 120L
+        const val CONNECT_TIMEOUT = 120L
+        const val READ_TIMEOUT = 120L
+        const val WRITE_TIMEOUT = 120L
     }
 
 

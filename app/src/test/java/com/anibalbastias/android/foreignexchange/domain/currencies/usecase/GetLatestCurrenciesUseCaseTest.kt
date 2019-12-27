@@ -1,43 +1,64 @@
 package com.anibalbastias.android.foreignexchange.domain.currencies.usecase
 
-import com.anibalbastias.android.foreignexchange.data.dataStoreFactory.currency.model.RemoteCurrencies
-import com.anibalbastias.android.foreignexchange.domain.base.executor.APIPostExecutionThread
+import com.anibalbastias.android.foreignexchange.base.module.coroutines.scope.ManagedCoroutineScope
 import com.anibalbastias.android.foreignexchange.domain.currencies.repository.ICurrenciesRepository
 import com.anibalbastias.android.foreignexchange.factory.CurrencyFactory.makeRemoteCurrencies
+import com.anibalbastias.android.foreignexchange.presentation.util.TestScope
+import com.anibalbastias.android.foreignexchange.presentation.ui.currencies.mapper.CurrenciesUiMapper
+import com.anibalbastias.android.foreignexchange.presentation.ui.currencies.model.UiCurrencies
+import com.anibalbastias.android.foreignexchange.presentation.util.LiveResult
 import com.anibalbastias.android.foreignexchange.presentation.util.empty
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.whenever
-import io.reactivex.Single
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.TestCoroutineDispatcher
+import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.setMain
+import kotlinx.coroutines.withContext
+import org.junit.Before
 import org.junit.Test
+import org.mockito.Mockito
 
 /**
  * Created by Anibal Bastias Soto on 2019-12-19.
  */
+@ExperimentalCoroutinesApi
 class GetLatestCurrenciesUseCaseTest {
 
-    private val postExecutionThread = mock<APIPostExecutionThread>()
     private val repository = mock<ICurrenciesRepository>()
-    private val useCase = GetLatestCurrenciesUseCase(repository, postExecutionThread)
+    private val liveData = mock<LiveResult<UiCurrencies>>()
+    private val mapper = mock<CurrenciesUiMapper>()
+    private val useCase = GetLatestCurrenciesUseCase(repository)
+
+    private val testDispatcher = TestCoroutineDispatcher()
+    private val managedCoroutineScope: ManagedCoroutineScope =
+        TestScope(
+            testDispatcher
+        )
+
+    @Before
+    fun setup() {
+        Dispatchers.setMain(testDispatcher)
+    }
 
     @Test // given when then
     fun `given any latest currencies, when execute, then completes`() {
-        stubRepositoryGetLatestCurrencies(Single.just(makeRemoteCurrencies()))
 
+        with(mapper) {
+            stubRepositoryGetLatestCurrencies(makeRemoteCurrencies().fromRemoteToUi())
+        }
 
-        val testObserver = useCase.buildUseCaseObservable(String.empty()).test()
-        testObserver.assertComplete()
+        managedCoroutineScope.launch {
+            withContext(testDispatcher) {
+                whenever(useCase.execute(liveData, String.empty())).then { }
+            }
+        }
     }
 
-    @Test // given when then
-    fun `given any latest currencies, when execute, then returns data`() {
-        val domainTermDeposit = makeRemoteCurrencies()
-        stubRepositoryGetLatestCurrencies(Single.just(domainTermDeposit))
-
-        val testObserver = useCase.buildUseCaseObservable(String.empty()).test()
-        testObserver.assertValue(domainTermDeposit)
-    }
-
-    private fun stubRepositoryGetLatestCurrencies(single: Single<RemoteCurrencies>) {
-        whenever(repository.getLatestCurrencies(String.empty())).thenReturn(single)
+    private fun stubRepositoryGetLatestCurrencies(currencies: UiCurrencies) {
+        runBlockingTest {
+            whenever(repository.getLatestCurrencies(String.empty())).thenReturn(currencies)
+        }
     }
 }

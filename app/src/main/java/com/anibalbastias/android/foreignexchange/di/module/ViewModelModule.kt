@@ -1,4 +1,4 @@
-package com.anibalbastias.android.foreignexchange.presentation.module
+package com.anibalbastias.android.foreignexchange.di.module
 
 import androidx.lifecycle.ViewModel
 import com.anibalbastias.android.foreignexchange.base.module.ViewModelKey

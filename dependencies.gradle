@@ -90,6 +90,7 @@ ext {
                                    retrofit2               : "com.squareup.retrofit2:retrofit:${retrofitVersion}",
                                    retrofit2Converter      : "com.squareup.retrofit2:converter-gson:${retrofitVersion}",
                                    retrofit2RxAdapter      : "com.squareup.retrofit2:adapter-rxjava2:${retrofitVersion}",
+                                   retrofit2Mock           : "com.squareup.retrofit2:retrofit-mock:${retrofitVersion}",
                                    gson                    : "com.google.code.gson:gson:${gsonVersion}",
                                    okHttpLoggingInterceptor: "com.squareup.okhttp3:logging-interceptor:${okHttpVersion}",
                                    okhttp                  : "com.squareup.okhttp3:okhttp:${okHttpVersion}",
