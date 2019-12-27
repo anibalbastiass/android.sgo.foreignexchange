@@ -8,7 +8,7 @@ jacoco {
 android {
     buildTypes {
         debug {
-            testCoverageEnabled false
+            testCoverageEnabled true
         }
     }
     testOptions {
