@@ -42,7 +42,6 @@
                 android:padding="5dp"
                 android:gravity="start"
                 android:src="@drawable/ic_placeholder"
-                android:tag="currenciesToolbarLogo"
                 android:tint="@color/primaryColor" />
 
         </androidx.appcompat.widget.Toolbar>
