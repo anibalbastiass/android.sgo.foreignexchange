@@ -32,7 +32,7 @@
 
             <androidx.appcompat.widget.AppCompatSpinner
                 android:id="@+id/currencyItemSpinner"
-                android:layout_width="130dp"
+                android:layout_width="140dp"
                 android:layout_height="50dp"
                 bind:entries="@{currenciesViewModel.currencyList}"
                 bind:layout_constraintBottom_toBottomOf="parent"

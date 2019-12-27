@@ -3,6 +3,7 @@ package com.anibalbastias.android.foreignexchange.presentation.util
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
+import android.util.Log
 import android.view.animation.AnimationUtils
 import android.widget.*
 import androidx.core.content.ContextCompat
@@ -63,22 +64,28 @@ fun getTs(): String {
 
 fun String.Companion.empty() = ""
 
-fun ImageView.loadImageWithoutPlaceholder(url: String) =
+fun ImageView.loadImageWithoutPlaceholder(url: String) = try {
     GlideApp.with(context)
         .load(url)
         .diskCacheStrategy(DiskCacheStrategy.ALL)
         .skipMemoryCache(true)
         .into(this)
+} catch (e: IllegalArgumentException) {
+    Log.wtf("Glide-tag", tag.toString())
+}
 
-fun ImageView.loadImage(url: String) =
+fun ImageView.loadImage(url: String) = try {
     GlideApp.with(context)
         .load(url)
         .placeholder(R.drawable.ic_placeholder)
         .diskCacheStrategy(DiskCacheStrategy.ALL)
         .skipMemoryCache(true)
         .into(this)
+} catch (e: IllegalArgumentException) {
+    Log.wtf("Glide-tag", tag.toString())
+}
 
-fun ImageView.loadImageWithPlaceholderCenterCrop(url: String) =
+fun ImageView.loadImageWithPlaceholderCenterCrop(url: String) = try {
     GlideApp.with(context)
         .load(url)
         .centerInside()
@@ -86,6 +93,9 @@ fun ImageView.loadImageWithPlaceholderCenterCrop(url: String) =
         .diskCacheStrategy(DiskCacheStrategy.ALL)
         .skipMemoryCache(false)
         .into(this)
+} catch (e: IllegalArgumentException) {
+    Log.wtf("Glide-tag", tag.toString())
+}
 
 fun isTablet(context: Context): Boolean = try {
     context.resources.getBoolean(R.bool.isTablet)

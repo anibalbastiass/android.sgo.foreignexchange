@@ -31,11 +31,7 @@ class ForeignExchangeApplication : MultiDexApplication() {
         appComponent().inject(this)
         context = this
         appContext = this
-
-        // Glide Tag
-        setTagId(R.id.glide_tag)
     }
-
 }
 
 private fun buildDagger(context: Context): ApplicationComponent {
