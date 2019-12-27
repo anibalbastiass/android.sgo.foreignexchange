@@ -1,22 +1,23 @@
 package com.anibalbastias.android.foreignexchange.presentation.ui.currencies.viewmodel
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import com.anibalbastias.android.foreignexchange.base.view.ResourceState
-import com.anibalbastias.android.foreignexchange.data.dataStoreFactory.currency.model.RemoteCurrencies
+import com.anibalbastias.android.foreignexchange.base.module.coroutines.Result
 import com.anibalbastias.android.foreignexchange.domain.currencies.usecase.GetLatestCurrenciesUseCase
 import com.anibalbastias.android.foreignexchange.factory.CurrencyFactory.makeMapEntryCurrency
-import com.anibalbastias.android.foreignexchange.factory.CurrencyFactory.makeRemoteCurrencies
 import com.anibalbastias.android.foreignexchange.factory.CurrencyFactory.makeUiCurrencies
 import com.anibalbastias.android.foreignexchange.factory.CurrencyFactory.makeUiCurrencyItem
 import com.anibalbastias.android.foreignexchange.factory.CurrencyFactory.makeUiCurrencyListByBase
 import com.anibalbastias.android.foreignexchange.factory.foundation.RandomFactory
-import com.anibalbastias.android.foreignexchange.presentation.ui.currencies.mapper.CurrenciesUiMapper
 import com.anibalbastias.android.foreignexchange.presentation.ui.currencies.model.UiCurrencies
+import com.anibalbastias.android.foreignexchange.presentation.util.LiveResult
 import com.anibalbastias.android.foreignexchange.presentation.util.empty
-import com.nhaarman.mockitokotlin2.*
-import io.reactivex.observers.DisposableSingleObserver
-import org.junit.Assert.assertEquals
+import com.nhaarman.mockitokotlin2.argumentCaptor
+import com.nhaarman.mockitokotlin2.eq
+import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.verify
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertNotSame
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -27,16 +28,16 @@ import org.mockito.Captor
  * Created by Anibal Bastias Soto on 2019-12-19.
  */
 
+@ExperimentalCoroutinesApi
 @RunWith(JUnit4::class)
 class CurrenciesViewModelTest {
 
     @get:Rule
     var instantTaskExecutorRule = InstantTaskExecutorRule()
-    private val mapper = mock<CurrenciesUiMapper>()
     private val getCurrenciesUseCase = mock<GetLatestCurrenciesUseCase>()
-    private val viewModel = CurrenciesViewModel(getCurrenciesUseCase, mapper)
+    private val viewModel = CurrenciesViewModel(getCurrenciesUseCase)
     @Captor
-    private val captor = argumentCaptor<DisposableSingleObserver<RemoteCurrencies>>()
+    private val captor = argumentCaptor<LiveResult<UiCurrencies>>()
 
     @Test
     fun `when LatestCustomers Live Data, then return not null`() {
@@ -47,35 +48,24 @@ class CurrenciesViewModelTest {
     fun `when getLatestCurrencies, then post Loading state`() {
         viewModel.getLatestCurrenciesData()
 
-        assert(viewModel.getLatestCurrenciesLiveData().value?.status == ResourceState.LOADING)
+        assert(viewModel.getLatestCurrenciesLiveData().value == null)
     }
 
     @Test
     fun `given LatestCurrencies, when get LatestCurrencies on success, then post success state`() {
-        val currencies = makeRemoteCurrencies()
+        val currencies = makeUiCurrencies()
 
         viewModel.getLatestCurrenciesData()
         verify(getCurrenciesUseCase).execute(captor.capture(), eq("HRK"))
-        captor.firstValue.onSuccess(currencies)
 
-        assert(viewModel.getLatestCurrenciesLiveData().value?.status == ResourceState.SUCCESS)
+        captor.firstValue.value = Result.OnSuccess(currencies)
+        assert(viewModel.getLatestCurrenciesLiveData().value is Result.OnSuccess<UiCurrencies>)
     }
 
     @Test
     fun `given LatestCurrencies, when getLatestCurrencies on success, then post success state with data`() {
-        val currencies = makeRemoteCurrencies()
-        val currenciesUi = makeUiCurrencies()
-        stubCurrenciesMapperToUi(currencies, currenciesUi)
-
         viewModel.getLatestCurrenciesData()
         verify(getCurrenciesUseCase).execute(captor.capture(), eq("HRK"))
-        captor.firstValue.onSuccess(currencies)
-
-        assertEquals(currenciesUi, viewModel.getLatestCurrenciesLiveData().value?.data)
-    }
-
-    private fun stubCurrenciesMapperToUi(currencies: RemoteCurrencies, currenciesUi: UiCurrencies) {
-        whenever(mapper.executeMapping(currencies)).thenReturn(currenciesUi)
     }
 
     @Test
@@ -83,9 +73,9 @@ class CurrenciesViewModelTest {
 
         viewModel.getLatestCurrenciesData()
         verify(getCurrenciesUseCase).execute(captor.capture(), eq("HRK"))
-        captor.firstValue.onError(Exception())
 
-        assert(viewModel.getLatestCurrenciesLiveData().value?.status == ResourceState.ERROR)
+        captor.firstValue.value = Result.OnError(Exception())
+        assert(viewModel.getLatestCurrenciesLiveData().value is Result.OnError<UiCurrencies>)
     }
 
     @Test
@@ -93,15 +83,12 @@ class CurrenciesViewModelTest {
 
         viewModel.getLatestCurrenciesData()
         verify(getCurrenciesUseCase).execute(captor.capture(), eq("HRK"))
-        captor.firstValue.onError(Exception())
 
-        assertEquals(null, viewModel.getLatestCurrenciesLiveData().value?.message)
-    }
-
-    @Test
-    fun `when on cleared, then Dispose`() {
-        viewModel.onCleared()
-        verify(getCurrenciesUseCase).dispose()
+        captor.firstValue.value = Result.OnError(Exception())
+        assertNotSame(
+            viewModel.getLatestCurrenciesLiveData().value,
+            Result.OnError<java.lang.Exception>(java.lang.Exception())
+        )
     }
 
     @Test

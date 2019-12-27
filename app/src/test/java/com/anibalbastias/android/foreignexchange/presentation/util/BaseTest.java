@@ -1,4 +1,4 @@
-package com.anibalbastias.android.foreignexchange.presentation.ui;
+package com.anibalbastias.android.foreignexchange.presentation.util;
 
 import org.junit.Before;
 import org.mockito.MockitoAnnotations;

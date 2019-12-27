@@ -19,10 +19,12 @@ class CurrenciesUiMapperTest {
     fun `given Currencies Remote, when map to Ui, then returns Currencies Ui`() {
         val remoteCurrencies = makeRemoteCurrencies()
 
-        val uiCurrencies = mapper.executeMapping(remoteCurrencies)
+        val uiCurrencies = with(mapper) {
+            remoteCurrencies.fromRemoteToUi()
+        }
 
-        assertEquals("rates", remoteCurrencies.rates, uiCurrencies?.rates)
-        assertEquals("base", remoteCurrencies.base, uiCurrencies?.base)
-        assertEquals("date", remoteCurrencies.date, uiCurrencies?.date)
+        assertEquals("rates", remoteCurrencies.rates, uiCurrencies.rates)
+        assertEquals("base", remoteCurrencies.base, uiCurrencies.base)
+        assertEquals("date", remoteCurrencies.date, uiCurrencies.date)
     }
 }

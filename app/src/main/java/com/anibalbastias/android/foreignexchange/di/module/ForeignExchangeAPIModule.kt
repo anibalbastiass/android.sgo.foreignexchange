@@ -21,9 +21,9 @@ import javax.inject.Singleton
 class ForeignExchangeAPIModule {
 
     companion object {
-        private const val CONNECT_TIMEOUT = 120L
-        private const val READ_TIMEOUT = 120L
-        private const val WRITE_TIMEOUT = 120L
+        const val CONNECT_TIMEOUT = 120L
+        const val READ_TIMEOUT = 120L
+        const val WRITE_TIMEOUT = 120L
     }
 
 

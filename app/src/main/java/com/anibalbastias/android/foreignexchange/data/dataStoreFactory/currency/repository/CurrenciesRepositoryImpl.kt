@@ -16,7 +16,7 @@ import javax.inject.Singleton
  */
 
 @Singleton
-class CurrenciesRepositoryImpl @Inject constructor(
+open class CurrenciesRepositoryImpl @Inject constructor(
     private val foreignExchangeApiService: ForeignExchangeApiService,
     private val currenciesUiMapper: CurrenciesUiMapper
 ) : ICurrenciesRepository {

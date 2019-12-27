@@ -88,7 +88,7 @@ open class CurrenciesFragment : BaseModuleFragment(), BaseBindClickHandler<UiCur
             }
 
             // Set Swipe Refresh Layout
-            binding.currenciesListSwipeRefreshLayout?.initSwipe {
+            binding.currenciesListSwipeRefreshLayout.initSwipe {
                 getLatestCurrenciesData()
             }
 
@@ -101,7 +101,7 @@ open class CurrenciesFragment : BaseModuleFragment(), BaseBindClickHandler<UiCur
 
     private fun setLatestCurrenciesData(viewData: UiCurrencies?) {
 
-        binding.currenciesListSwipeRefreshLayout?.isRefreshing = false
+        binding.currenciesListSwipeRefreshLayout.isRefreshing = false
 
         currenciesViewModel.apply {
             setLatestCurrenciesUi(viewData)
@@ -112,7 +112,7 @@ open class CurrenciesFragment : BaseModuleFragment(), BaseBindClickHandler<UiCur
     }
 
     private fun initToolbar() {
-        binding.currenciesToolbar?.run {
+        binding.currenciesToolbar.run {
             applyFontForToolbarTitle(activity!!)
             setNoArrowUpToolbar(activity!!)
         }
