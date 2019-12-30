@@ -16,12 +16,26 @@ android {
         versionName appforeignExchangeVersionName
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
-        resValue "string", "foreignexchange_endpoint", "$globalforeignExchangeDependencies.FOREIGN_EXCHANGE_BASE_ENDPOINT"
     }
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    // Define android application flavors here.
+    flavorDimensions "tier"
+    productFlavors {
+        prod {
+            applicationIdSuffix = ".prod"
+            dimension "tier"
+            resValue "string", "foreignexchange_endpoint", "$globalforeignExchangeDependencies.FOREIGN_EXCHANGE_BASE_ENDPOINT"
+        }
+        dummy {
+            applicationIdSuffix = ".dummy"
+            versionNameSuffix = "-dummy"
+            dimension "tier"
+            resValue "string", "foreignexchange_endpoint", "\"http://mock.api/currencies/\""
         }
     }
     testOptions {
@@ -42,6 +56,15 @@ android {
             resources {
                 srcDir '../buildsystem/'
             }
+        }
+        prod {
+            java.srcDir("src/prod/java")
+            res.srcDir("src/prod/res")
+        }
+        dummy {
+            java.srcDir("src/dummy/java")
+            res.srcDir("src/dummy/res")
+            assets.srcDirs = ['src/dummy/assets', 'src/dummy/assets/']
         }
     }
     lintOptions {

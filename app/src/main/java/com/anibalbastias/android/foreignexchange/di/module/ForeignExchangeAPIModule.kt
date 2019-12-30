@@ -1,10 +1,11 @@
 package com.anibalbastias.android.foreignexchange.di.module
 
 import com.anibalbastias.android.foreignexchange.BuildConfig
-import com.anibalbastias.android.foreignexchange.presentation.ForeignExchangeApplication
 import com.anibalbastias.android.foreignexchange.R
+import com.anibalbastias.android.foreignexchange.data.foreignexchange.FakeInterceptor
 import com.anibalbastias.android.foreignexchange.data.foreignexchange.ForeignExchangeAPIGSONManager
 import com.anibalbastias.android.foreignexchange.data.foreignexchange.ForeignExchangeApiService
+import com.anibalbastias.android.foreignexchange.presentation.ForeignExchangeApplication
 import com.google.gson.Gson
 import dagger.Module
 import dagger.Provides
@@ -34,10 +35,15 @@ class ForeignExchangeAPIModule {
         val httpLoggingInterceptor = HttpLoggingInterceptor(HttpLoggingInterceptor.Logger.DEFAULT)
         val clientBuilder = OkHttpClient.Builder()
 
-        if (BuildConfig.DEBUG) {
-            httpLoggingInterceptor.level = HttpLoggingInterceptor.Level.BODY
-            clientBuilder.addInterceptor(httpLoggingInterceptor)
+        if (BuildConfig.FLAVOR.equals("dummy")) {
+            clientBuilder.addInterceptor(FakeInterceptor())
+        } else {
+            if (BuildConfig.DEBUG) {
+                httpLoggingInterceptor.level = HttpLoggingInterceptor.Level.BODY
+                clientBuilder.addInterceptor(httpLoggingInterceptor)
+            }
         }
+
         clientBuilder.connectTimeout(CONNECT_TIMEOUT, TimeUnit.SECONDS)
         clientBuilder.writeTimeout(WRITE_TIMEOUT, TimeUnit.SECONDS)
         clientBuilder.readTimeout(READ_TIMEOUT, TimeUnit.SECONDS)
