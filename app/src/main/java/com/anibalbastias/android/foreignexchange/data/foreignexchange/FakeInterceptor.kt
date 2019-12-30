@@ -5,10 +5,7 @@ import android.os.SystemClock
 import android.util.Log
 import com.anibalbastias.android.foreignexchange.presentation.context
 import okhttp3.*
-import java.io.BufferedReader
 import java.io.IOException
-import java.io.InputStream
-import java.io.InputStreamReader
 import java.net.URI
 
 /**
@@ -32,35 +29,28 @@ class FakeInterceptor : Interceptor {
         val randomCode = 200
         val defaultFileName = getFileName(chain)
         val suggestionFileName = defaultFileName?.toLowerCase()!!
-        var fileName: String = getFilePath(uri, suggestionFileName)
-
-        fileName += ".json"
-
-        Log.d(TAG, "Read data from file: $fileName")
+        val fileName: String = getFilePath(uri, suggestionFileName) + ".json"
 
         try {
-            val `is`: InputStream = context?.assets?.open(fileName)!!
-            val r = BufferedReader(InputStreamReader(`is`))
-            val responseStringBuilder = StringBuilder()
-            var line: String?
 
-            while (r.readLine().also { line = it } != null) {
-                responseStringBuilder.append(line).append('\n')
+            val responseString = context?.assets?.open(fileName)?.bufferedReader().use {
+                it?.readText()
             }
 
             val builder = Response.Builder().code(randomCode)
-                .message(responseStringBuilder.toString())
+                .message(responseString.toString())
                 .request(chain.request())
                 .protocol(Protocol.HTTP_1_0)
                 .body(
                     ResponseBody.create(
                         MediaType.parse(contentType),
-                        responseStringBuilder.toString().toByteArray()
+                        responseString.toString().toByteArray()
                     )
                 )
                 .addHeader("content-type", contentType)
 
             response = builder.build()
+
         } catch (e: IOException) {
             Log.e(TAG, e.message, e)
         }
