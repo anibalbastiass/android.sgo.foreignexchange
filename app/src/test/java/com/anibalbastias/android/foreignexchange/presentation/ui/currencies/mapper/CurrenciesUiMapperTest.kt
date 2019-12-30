@@ -1,16 +1,13 @@
 package com.anibalbastias.android.foreignexchange.presentation.ui.currencies.mapper
 
-import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.anibalbastias.android.foreignexchange.factory.CurrencyFactory.makeRemoteCurrencies
 import junit.framework.Assert.assertEquals
 import org.junit.Test
-import org.junit.runner.RunWith
 
 /**
  * Created by Anibal Bastias Soto on 2019-12-19.
  */
 
-@RunWith(AndroidJUnit4::class)
 class CurrenciesUiMapperTest {
 
     private val mapper = CurrenciesUiMapper()
